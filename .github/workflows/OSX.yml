@@ -1,0 +1,23 @@
+name: OSX
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:               
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: |
+          mkdir release
+          python scripts/mk_make.py -x --prefix=$PWD/release --java
+          cd build
+          make -j $(nproc)
+          make install 
+        shell: cmd
+      - uses: actions/upload-artifact@v4
+        with:
+          name: osx-build
+          path: release/
