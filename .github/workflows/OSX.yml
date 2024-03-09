@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
       - run: |
           mkdir release
-          python scripts/mk_make.py -x --prefix=$PWD/release --java
+          python scripts/mk_make.py --prefix=$PWD/release --java
           cd build
           make -j $(nproc)
           make install 
