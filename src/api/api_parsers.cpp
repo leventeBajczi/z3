@@ -45,7 +45,8 @@ extern "C" {
             install_dl_cmds(*ctx.get());
             install_proof_cmds(*ctx.get());
             install_opt_cmds(*ctx.get());
-            install_smt2_extra_cmds(*ctx.get());            
+            install_smt2_extra_cmds(*ctx.get());
+            install_dbg_cmds(*ctx.get());            
             ctx->register_plist();
             ctx->set_ignore_check(true);
         }
@@ -183,6 +184,7 @@ extern "C" {
         install_proof_cmds(*ctx.get());
         install_opt_cmds(*ctx.get());
         install_smt2_extra_cmds(*ctx.get());
+        install_dbg_cmds(*ctx.get());
         ctx->register_plist();
         ctx->set_ignore_check(true);
                     
@@ -241,6 +243,7 @@ extern "C" {
             install_proof_cmds(*ctx);
             install_opt_cmds(*ctx);
             install_smt2_extra_cmds(*ctx);
+            install_dbg_cmds(*ctx);
             ctx->register_plist();
             ctx->set_solver_factory(mk_smt_strategic_solver_factory());
         }
