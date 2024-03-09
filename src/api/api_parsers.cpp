@@ -28,6 +28,7 @@ Revision History:
 #include "muz/fp/dl_cmds.h"
 #include "opt/opt_cmds.h"
 #include "cmd_context/extra_cmds/proof_cmds.h"
+#include "cmd_context/extra_cmds/dbg_cmds.h"
 
 
 
