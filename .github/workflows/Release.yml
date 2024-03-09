@@ -109,7 +109,7 @@ jobs:
           asset_name: com.microsoft.z3.jar
           asset_content_type: application/binary
 
-build-linux-debug:
+  build-linux-debug:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
