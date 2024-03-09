@@ -1,0 +1,147 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:               
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+
+  build-windows:
+    needs: create-release
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+      - run: |
+          md build
+          cd build
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cmake -DZ3_BUILD_JAVA_BINDINGS=True -G "NMake Makefiles" ../
+          nmake    
+          cd ..
+        shell: cmd
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/
+      - name: upload libz3.dll
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./build/libz3.dll
+          asset_name: libz3.dll
+          asset_content_type: application/binary
+      - name: upload libz3java.dll
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./build/z3java.dll
+          asset_name: libz3java.dll
+          asset_content_type: application/binary
+  
+
+  build-linux:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: |
+          mkdir release
+          python scripts/mk_make.py --prefix=$PWD/release --java
+          cd build
+          make -j $(nproc)
+          make install 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: release/
+      - name: upload libz3.so
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/lib/libz3.so
+          asset_name: libz3.so
+          asset_content_type: application/binary
+      - name: upload libz3java.so
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/lib/libz3java.so
+          asset_name: libz3java.so
+          asset_content_type: application/binary
+      - name: upload com.microsoft.z3.jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/lib/com.microsoft.z3.jar
+          asset_name: com.microsoft.z3.jar
+          asset_content_type: application/binary
+
+
+  build-macos:
+    needs: create-release
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: |
+          mkdir release
+          python scripts/mk_make.py --prefix=$PWD/release --java
+          cd build
+          make -j $(nproc)
+          make install 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: release/
+      - name: upload libz3.dylib
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/lib/libz3.dylib
+          asset_name: libz3.dylib
+          asset_content_type: application/binary
+      - name: upload libz3java.dylib
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/lib/libz3java.dylib
+          asset_name: libz3java.dylib
+          asset_content_type: application/binary
