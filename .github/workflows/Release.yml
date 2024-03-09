@@ -109,6 +109,32 @@ jobs:
           asset_name: com.microsoft.z3.jar
           asset_content_type: application/binary
 
+build-linux-debug:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: |
+          mkdir release
+          python scripts/mk_make.py --prefix=$PWD/release -d -t
+          cd build
+          make -j $(nproc)
+          make install 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-build-debug
+          path: release/
+      - name: upload z3-debug
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/bin/z3
+          asset_name: z3-debug
+          asset_content_type: application/binary
+
 
   build-macos:
     needs: create-release
