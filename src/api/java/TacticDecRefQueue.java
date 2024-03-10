@@ -15,7 +15,7 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 class TacticDecRefQueue extends IDecRefQueue<Tactic> {
     public TacticDecRefQueue() 

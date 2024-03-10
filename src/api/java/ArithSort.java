@@ -15,7 +15,7 @@ Notes:
     
 **/
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * An arithmetic sort, i.e., Int or Real.

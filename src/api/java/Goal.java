@@ -15,9 +15,9 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
-import com.microsoft.z3.enumerations.Z3_goal_prec;
+import com.microsoft.z3legacy.enumerations.Z3_goal_prec;
 
 /**
  * A goal (aka problem). A goal is essentially a set of formulas, that can be

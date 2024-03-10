@@ -15,11 +15,11 @@ Notes:
     
 **/
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 import static com.microsoft.z3.Constructor.of;
 
-import com.microsoft.z3.enumerations.Z3_ast_print_mode;
+import com.microsoft.z3legacy.enumerations.Z3_ast_print_mode;
 
 import java.util.Map;
 
