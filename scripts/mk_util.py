@@ -1206,7 +1206,7 @@ class JavaDLLComponent(Component):
         if is_java_enabled():
             mk_dir(os.path.join(BUILD_DIR, 'api', 'java', 'classes'))
             dllfile = '%s$(SO_EXT)' % self.dll_name
-            out.write('libz3java$(SO_EXT): libz3$(SO_EXT) %s\n' % os.path.join(self.to_src_dir, 'Native.cpp'))
+            out.write('libz3javalegacy$(SO_EXT): libz3legacy$(SO_EXT) %s\n' % os.path.join(self.to_src_dir, 'Native.cpp'))
             t = '\t$(CXX) $(CXXFLAGS) $(CXX_OUT_FLAG)api/java/Native$(OBJ_EXT) -I"%s" -I"%s/PLATFORM" -I%s %s/Native.cpp\n' % (JNI_HOME, JNI_HOME, get_component('api').to_src_dir, self.to_src_dir)
             if IS_OSX:
                 t = t.replace('PLATFORM', 'darwin')
