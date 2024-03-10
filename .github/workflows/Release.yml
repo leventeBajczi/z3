@@ -76,10 +76,8 @@ jobs:
         with:
           python-version: '2.7'
       - run: |
-          autoconf
-          ./configure --prefix=$PWD/release
           mkdir release
-          python scripts/mk_make.py
+          python scripts/mk_make.py --prefix=$PWD/release
           cd build
           make -j $(nproc)
           make install 
@@ -125,10 +123,8 @@ jobs:
         with:
           python-version: '2.7'
       - run: |
-          autoconf
-          ./configure --prefix=$PWD/release
           mkdir release
-          python scripts/mk_make.py
+          python scripts/mk_make.py --prefix=$PWD/release
           cd build
           make -j $(nproc)
           make install 
