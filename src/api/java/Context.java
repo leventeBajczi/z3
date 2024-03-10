@@ -17,7 +17,7 @@ Notes:
 
 package com.microsoft.z3legacy;
 
-import static com.microsoft.z3.Constructor.of;
+import static com.microsoft.z3legacy.Constructor.of;
 
 import com.microsoft.z3legacy.enumerations.Z3_ast_print_mode;
 

@@ -1,4 +1,4 @@
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 public class ConstructorDecRefQueue extends IDecRefQueue<Constructor> {
     public ConstructorDecRefQueue() {

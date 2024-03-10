@@ -55,7 +55,7 @@ target_include_directories(z3java PRIVATE
 # This prevents CMake from automatically defining ``z3java_EXPORTS``
 set_property(TARGET z3java PROPERTY DEFINE_SYMBOL "")
 
-# Rule to generate the ``com.microsoft.z3.enumerations`` package
+# Rule to generate the ``com.microsoft.z3legacy.enumerations`` package
 # FIXME: This list of files is fragile
 set(Z3_JAVA_ENUMERATION_PACKAGE_FILES
   Z3_ast_kind.java
@@ -200,7 +200,7 @@ add_custom_target(build_z3_java_bindings
     z3JavaJar
 )
 
-# Rule to build ``com.microsoft.z3.jar``
+# Rule to build ``com.microsoft.z3legacy.jar``
 # TODO: Should we set ``CMAKE_JNI_TARGET`` to ``TRUE``?
 add_jar(z3JavaJar
   SOURCES ${Z3_JAVA_JAR_SOURCE_FILES_FULL_PATH}

@@ -17,7 +17,7 @@ Notes:
 
 package com.microsoft.z3legacy;
 
-import com.microsoft.z3.Native.LongPtr;
+import com.microsoft.z3legacy.Native.LongPtr;
 
 /**
  * List sorts.
