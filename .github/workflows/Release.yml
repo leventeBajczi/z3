@@ -31,11 +31,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python 2.7
-        uses: actions/setup-python@v4
+      - uses: LizardByte/setup-python-action@master
         with:
-          python-version: 2.7
-          cache: pip
+          python-version: '2.7'
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
       - run: |
@@ -73,11 +71,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python 2.7
-        uses: actions/setup-python@v4
+      - uses: LizardByte/setup-python-action@master
         with:
-          python-version: 2.7
-          cache: pip
+          python-version: '2.7'
       - run: |
           autoconf
           ./configure --prefix=$PWD/release
@@ -124,11 +120,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python 2.7
-        uses: actions/setup-python@v4
+      - uses: LizardByte/setup-python-action@master
         with:
-          python-version: 2.7
-          cache: pip
+          python-version: '2.7'
       - run: |
           autoconf
           ./configure --prefix=$PWD/release
