@@ -13,5 +13,6 @@ RUN add-apt-repository ppa:openjdk-r/ppa && \
 WORKDIR /github/workspace
 
 COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
