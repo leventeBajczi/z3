@@ -82,11 +82,11 @@ def init_project_def():
     add_exe('test', ['api', 'fuzzing'], exe_name='test-z3', install=False)
     add_dll('api_dll', ['api', 'sat', 'extra_cmds'], 'api/dll', 
             reexports=['api'], 
-            dll_name='libz3', 
+            dll_name='libz3legacy', 
             static=build_static_lib(),
             export_files=API_files)
     add_dot_net_dll('dotnet', ['api_dll'], 'api/dotnet', dll_name='Microsoft.Z3', assembly_info_dir='Properties')
-    add_java_dll('java', ['api_dll'], 'api/java', dll_name='libz3java', package_name="com.microsoft.z3", manifest_file='manifest')
+    add_java_dll('java', ['api_dll'], 'api/java', dll_name='libz3javalegacy', package_name="com.microsoft.z3legacy", manifest_file='manifest')
     add_hlib('cpp', 'api/c++', includes2install=['z3++.h'])
     set_z3py_dir('api/python')
     # Examples
