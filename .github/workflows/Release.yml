@@ -46,23 +46,23 @@ jobs:
         with:
           name: windows-build
           path: build/
-      - name: upload libz3.dll
+      - name: upload libz3legacy.dll
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/libz3.dll
-          asset_name: libz3.dll
+          asset_path: ./build/libz3legacy.dll
+          asset_name: libz3legacy.dll
           asset_content_type: application/binary
-      - name: upload libz3java.dll
+      - name: upload libz3javalegacy.dll
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/z3java.dll
-          asset_name: libz3java.dll
+          asset_path: ./build/z3javalegacy.dll
+          asset_name: libz3javalegacy.dll
           asset_content_type: application/binary
   
 
@@ -77,32 +77,32 @@ jobs:
         with:
           name: linux-build
           path: build/
-      - name: upload libz3.so
+      - name: upload libz3legacy.so
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/libz3.so
-          asset_name: libz3.so
+          asset_path: ./build/libz3legacy.so
+          asset_name: libz3legacy.so
           asset_content_type: application/binary
-      - name: upload libz3java.so
+      - name: upload libz3javalegacy.so
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/libz3java.so
-          asset_name: libz3java.so
+          asset_path: ./build/libz3javalegacy.so
+          asset_name: libz3javalegacy.so
           asset_content_type: application/binary
-      - name: upload com.microsoft.z3.jar
+      - name: upload com.microsoft.z3legacy.jar
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/com.microsoft.z3.jar
-          asset_name: com.microsoft.z3.jar
+          asset_path: ./build/com.microsoft.z3legacy.jar
+          asset_name: com.microsoft.z3legacy.jar
           asset_content_type: application/binary
 
   build-macos:
@@ -124,21 +124,21 @@ jobs:
         with:
           name: macos-build
           path: release/
-      - name: upload libz3.dylib
+      - name: upload libz3legacy.dylib
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/libz3.dylib
-          asset_name: libz3.dylib
+          asset_path: ./build/libz3legacy.dylib
+          asset_name: libz3legacy.dylib
           asset_content_type: application/binary
-      - name: upload libz3java.dylib
+      - name: upload libz3javalegacy.dylib
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./build/libz3java.dylib
-          asset_name: libz3java.dylib
+          asset_path: ./build/libz3javalegacy.dylib
+          asset_name: libz3javalegacy.dylib
           asset_content_type: application/binary
