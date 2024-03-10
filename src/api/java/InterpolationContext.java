@@ -17,7 +17,7 @@ Notes:
 
 package com.microsoft.z3legacy;
 
-import com.microsoft.z3.enumerations.Z3_lbool;
+import com.microsoft.z3legacy.enumerations.Z3_lbool;
 
 import java.util.Map;
 
