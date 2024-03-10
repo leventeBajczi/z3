@@ -19,7 +19,8 @@ Revision History:
 #ifndef HWF_H_
 #define HWF_H_
 
-#include<string>
+#include <cstring>
+#include <string>
 #include"mpz.h"
 #include"mpq.h"
 #include"mpf.h" // we use the same rounding modes as mpf's
