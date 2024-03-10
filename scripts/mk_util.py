@@ -1218,10 +1218,10 @@ class JavaDLLComponent(Component):
                 t = t.replace('PLATFORM', 'win32')
             out.write(t)
             if IS_WINDOWS: # On Windows, CL creates a .lib file to link against.
-                out.write('\t$(SLINK) $(SLINK_OUT_FLAG)libz3javalegacy$(SO_EXT) $(SLINK_FLAGS) %s$(OBJ_EXT) libz3$(LIB_EXT)\n' %
+                out.write('\t$(SLINK) $(SLINK_OUT_FLAG)libz3javalegacy$(SO_EXT) $(SLINK_FLAGS) %s$(OBJ_EXT) libz3legacy$(LIB_EXT)\n' %
                           os.path.join('api', 'java', 'Native'))
             else:
-                out.write('\t$(SLINK) $(SLINK_OUT_FLAG)libz3javalegacy$(SO_EXT) $(SLINK_FLAGS) %s$(OBJ_EXT) libz3$(SO_EXT)\n' %
+                out.write('\t$(SLINK) $(SLINK_OUT_FLAG)libz3javalegacy$(SO_EXT) $(SLINK_FLAGS) %s$(OBJ_EXT) libz3legacy$(SO_EXT)\n' %
                           os.path.join('api', 'java', 'Native'))
             out.write('%s.jar: libz3javalegacy$(SO_EXT) ' % self.package_name)
             deps = ''
