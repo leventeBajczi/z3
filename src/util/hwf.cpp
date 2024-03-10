@@ -59,6 +59,9 @@ hwf_manager::hwf_manager() :
 {
 #ifdef _WINDOWS
 #if defined(_AMD64_) || defined(_M_IA64)
+#ifdef USE_INTRINSICS
+#include <smmintrin.h>
+#endif
     // Precision control is not supported on x64.
     // See: http://msdn.microsoft.com/en-us/library/e9b52ceh(VS.110).aspx
     // CMW: I think this is okay though, the compiler will chose the right instructions
