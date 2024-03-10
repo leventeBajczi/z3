@@ -15,9 +15,9 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
-import com.microsoft.z3.enumerations.Z3_sort_kind;
+import com.microsoft.z3legacy.enumerations.Z3_sort_kind;
 
 /**
  * A Model contains interpretations (assignments) of constants and functions.

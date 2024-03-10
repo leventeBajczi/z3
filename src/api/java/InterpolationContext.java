@@ -15,14 +15,14 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 import java.util.Map;
 import java.lang.String;
 
-import com.microsoft.z3.Native.IntPtr;
-import com.microsoft.z3.Native.UIntArrayPtr;
-import com.microsoft.z3.enumerations.Z3_lbool;
+import com.microsoft.z3legacy.Native.IntPtr;
+import com.microsoft.z3legacy.Native.UIntArrayPtr;
+import com.microsoft.z3legacy.enumerations.Z3_lbool;
 
 /** <summary>
  *  The InterpolationContext is suitable for generation of interpolants.

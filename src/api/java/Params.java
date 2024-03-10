@@ -16,7 +16,7 @@ Notes:
 **/ 
 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * A ParameterSet represents a configuration in the form of Symbol/value pairs.

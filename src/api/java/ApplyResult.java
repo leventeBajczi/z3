@@ -15,7 +15,7 @@ Notes:
     
 **/
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * ApplyResult objects represent the result of an application of a tactic to a

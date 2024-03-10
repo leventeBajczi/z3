@@ -15,7 +15,7 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * Interaction logging for Z3. <remarks> Note that this is a global, static log

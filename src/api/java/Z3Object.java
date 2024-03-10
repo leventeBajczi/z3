@@ -15,7 +15,7 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * Internal base class for interfacing with native Z3 objects. Should not be

@@ -15,7 +15,7 @@ Notes:
     
 **/ 
 
-package com.microsoft.z3;
+package com.microsoft.z3legacy;
 
 /**
  * Tactics are the basic building block for creating custom solvers for specific
