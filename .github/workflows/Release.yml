@@ -31,15 +31,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7
+          cache: pip
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
       - run: |
-          md build
+          python scripts/mk_make.py
           cd build
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cmake -DZ3_BUILD_JAVA_BINDINGS=True -G "NMake Makefiles" ../
-          nmake    
-          cd ..
+          nmake
         shell: cmd
       - uses: actions/upload-artifact@v4
         with:
@@ -71,6 +73,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7
+          cache: pip
       - run: |
           autoconf
           ./configure --prefix=$PWD/release
@@ -117,6 +124,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 2.7
+          cache: pip
       - run: |
           autoconf
           ./configure --prefix=$PWD/release
