@@ -67,7 +67,7 @@ jobs:
 
   build-linux:
     needs: create-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
 
   build-linux-debug:
     needs: create-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
