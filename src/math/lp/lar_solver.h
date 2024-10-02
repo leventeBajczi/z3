@@ -393,6 +393,7 @@ public:
     bool external_is_used(unsigned) const;
     void pop(unsigned k);
     unsigned num_scopes() const { return m_trail.get_num_scopes(); }
+    trail_stack& trail() { return m_trail; }
     bool compare_values(lpvar j, lconstraint_kind kind, const mpq& right_side);
     lpvar add_term(const vector<std::pair<mpq, lpvar>>& coeffs, unsigned ext_i);
     void register_existing_terms();
@@ -559,6 +560,7 @@ public:
         return m_mpq_lar_core_solver.m_r_solver.calc_current_x_is_feasible_include_non_basis();
     }
 
+    bool are_equal(lpvar j, lpvar k);
     std::pair<constraint_index, constraint_index> add_equality(lpvar j, lpvar k);
 
     u_dependency* get_bound_constraint_witnesses_for_column(unsigned j) {
@@ -621,6 +623,7 @@ public:
     lp_status find_feasible_solution();
     void move_non_basic_columns_to_bounds();
     bool move_non_basic_column_to_bounds(unsigned j);
+    bool move_lpvar_to_value(lpvar j, mpq const& value);
     inline bool r_basis_has_inf_int() const {
         for (unsigned j : r_basis()) {
             if (column_is_int(j) && !column_value_is_int(j))

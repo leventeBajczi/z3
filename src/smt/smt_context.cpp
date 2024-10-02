@@ -99,13 +99,15 @@ namespace smt {
         m_model_generator->set_context(this);
     }
 
-
     /**
        \brief retrieve flag for when cancelation is possible.
     */
 
     bool context::get_cancel_flag() {
-        return !m.limit().inc();
+        if (m.limit().inc())
+            return false;
+        m_last_search_failure = CANCELED;
+        return true;
     }
 
     void context::updt_params(params_ref const& p) {
@@ -1117,6 +1119,8 @@ namespace smt {
     */
     bool context::is_diseq(enode * n1, enode * n2) const {
         SASSERT(n1->get_sort() == n2->get_sort());
+        if (m.are_distinct(n1->get_root()->get_expr(), n2->get_root()->get_expr()))
+            return true;
         context * _this = const_cast<context*>(this);
         if (!m_is_diseq_tmp) {
             app * eq       = m.mk_eq(n1->get_expr(), n2->get_expr());
@@ -1856,8 +1860,10 @@ namespace smt {
             lbool phase = l_undef;
             m_case_split_queue->next_case_split(var, phase);
             used_queue = true;
-            if (var == null_bool_var)
+            if (var == null_bool_var) {
+                push_trail(value_trail(m_has_case_split, false));
                 return false;
+            }
 
             TRACE_CODE({
                 static unsigned counter = 0;
@@ -2908,6 +2914,43 @@ namespace smt {
         register_plugin(m_user_propagator);
     }
 
+    void context::user_propagate_initialize_value(expr* var, expr* value) {
+        m_values.push_back({expr_ref(var, m), expr_ref(value, m)});
+        push_trail(push_back_vector(m_values));
+    }
+
+    void context::initialize_value(expr* var, expr* value) {
+        IF_VERBOSE(10, verbose_stream() << "initialize " << mk_pp(var, m) << " := " << mk_pp(value, m) << "\n");
+        sort* s = var->get_sort();
+        ensure_internalized(var);
+            
+        if (m.is_bool(s)) {
+            auto v = get_bool_var_of_id_option(var->get_id());
+            if (v == null_bool_var) {
+                IF_VERBOSE(5, verbose_stream() << "Boolean variable has no literal " << mk_pp(var, m) << " := " << mk_pp(value, m) << "\n");
+                return;
+            }
+            m_bdata[v].m_phase_available = true;         
+            if (m.is_true(value))
+                m_bdata[v].m_phase = true;
+            else if (m.is_false(value))
+                m_bdata[v].m_phase = false;
+            else
+                IF_VERBOSE(5, verbose_stream() << "Boolean value is not constant " << mk_pp(var, m) << " := " << mk_pp(value, m) << "\n");
+            return;                
+        }
+
+        if (!e_internalized(var))
+            return;
+        theory* th = m_theories.get_plugin(s->get_family_id());
+        if (!th) {
+            IF_VERBOSE(5, verbose_stream() << "No theory is attached to variable " << mk_pp(var, m) << " := " << mk_pp(value, m) << "\n");
+            return;
+        }
+        th->initialize_value(var, value);
+
+    }
+
     bool context::watches_fixed(enode* n) const {
         return m_user_propagator && m_user_propagator->has_fixed() && n->get_th_var(m_user_propagator->get_family_id()) != null_theory_var;
     }
@@ -3741,14 +3784,18 @@ namespace smt {
             VERIFY(!resolve_conflict());
             return l_false;
         }
-        if (get_cancel_flag())
+        if (get_cancel_flag()) 
             return l_undef;
+        
         timeit tt(get_verbosity_level() >= 100, "smt.stats");
         reset_model();
         SASSERT(at_search_level());
         TRACE("search", display(tout); display_enodes_lbls(tout););
         TRACE("search_detail", m_asserted_formulas.display(tout););
         init_search();
+        for (auto const& [var, value] : m_values)
+            initialize_value(var, value);
+            
         flet<bool> l(m_searching, true);
         TRACE("after_init_search", display(tout););
         IF_VERBOSE(2, verbose_stream() << "(smt.searching)\n";);
@@ -3955,10 +4002,8 @@ namespace smt {
             if (m_last_search_failure != OK)
                 return true;
 
-            if (get_cancel_flag()) {
-                m_last_search_failure = CANCELED;
-                return true;
-            }
+            if (get_cancel_flag()) 
+                return true;            
 
             if (m_progress_callback) {
                 m_progress_callback->fast_progress_sample();
@@ -3969,10 +4014,8 @@ namespace smt {
             }
         }
 
-        if (get_cancel_flag()) {
-            m_last_search_failure = CANCELED;
-            return true;
-        }
+        if (get_cancel_flag()) 
+            return true;        
 
         if (memory::above_high_watermark()) {
             m_last_search_failure = MEMOUT;
@@ -4640,6 +4683,9 @@ namespace smt {
     }
 
     bool context::has_case_splits() {
+        if (!m_has_case_split)
+            return false;
+        
         for (unsigned i = get_num_b_internalized(); i-- > 0; ) {
             if (is_relevant(i) && get_assignment(i) == l_undef)
                 return true;

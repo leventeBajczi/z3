@@ -5445,10 +5445,10 @@ def EnumSort(name, values, ctx=None):
     num = len(values)
     _val_names = (Symbol * num)()
     for i in range(num):
-        _val_names[i] = to_symbol(values[i])
+        _val_names[i] = to_symbol(values[i], ctx)
     _values = (FuncDecl * num)()
     _testers = (FuncDecl * num)()
-    name = to_symbol(name)
+    name = to_symbol(name, ctx)
     S = DatatypeSortRef(Z3_mk_enumeration_sort(ctx.ref(), name, num, _val_names, _values, _testers), ctx)
     V = []
     for i in range(num):
@@ -6798,7 +6798,7 @@ class Statistics:
         sat
         >>> st = s.statistics()
         >>> len(st)
-        6
+        7
         """
         return int(Z3_stats_size(self.ctx.ref(), self.stats))
 
@@ -6812,11 +6812,11 @@ class Statistics:
         sat
         >>> st = s.statistics()
         >>> len(st)
-        6
+        7
         >>> st[0]
         ('nlsat propagations', 2)
         >>> st[1]
-        ('nlsat stages', 2)
+        ('nlsat restarts', 1)
         """
         if idx >= len(self):
             raise IndexError
@@ -7352,6 +7352,13 @@ class Solver(Z3PPObject):
         levels = (ctypes.c_uint * len(trail))()
         Z3_solver_get_levels(self.ctx.ref(), self.solver, trail.vector, len(trail), levels)
         return trail, levels
+
+    def set_initial_value(self, var, value):
+        """initialize the solver's state by setting the initial value of var to value
+        """
+        s = var.sort()
+        value = s.cast(value)
+        Z3_solver_set_initial_value(self.ctx.ref(), self.solver, var.ast, value.ast)
 
     def trail(self):
         """Return trail of the solver state after a check() call.
@@ -7926,9 +7933,12 @@ _on_model_eh = on_model_eh_type(_global_on_model)
 class Optimize(Z3PPObject):
     """Optimize API provides methods for solving using objective functions and weighted soft constraints"""
 
-    def __init__(self, ctx=None):
+    def __init__(self, optimize=None, ctx=None):
         self.ctx = _get_ctx(ctx)
-        self.optimize = Z3_mk_optimize(self.ctx.ref())
+        if optimize is None:
+            self.optimize = Z3_mk_optimize(self.ctx.ref())
+        else:
+            self.optimize = optimize
         self._on_models_id = None
         Z3_optimize_inc_ref(self.ctx.ref(), self.optimize)
 
@@ -8028,6 +8038,13 @@ class Optimize(Z3PPObject):
         if sys.version_info.major >= 3 and isinstance(arg, Iterable):
             return [asoft(a) for a in arg]
         return asoft(arg)
+
+    def set_initial_value(self, var, value):
+        """initialize the solver's state by setting the initial value of var to value
+        """
+        s = var.sort()
+        value = s.cast(value)
+        Z3_optimize_set_initial_value(self.ctx.ref(), self.optimize, var.ast, value.ast)
 
     def maximize(self, arg):
         """Add objective function to maximize."""
@@ -10220,7 +10237,7 @@ def FPs(names, fpsort, ctx=None):
     >>> x.ebits()
     8
     >>> fpMul(RNE(), fpAdd(RNE(), x, y), z)
-    x + y * z
+    (x + y) * z
     """
     ctx = _get_ctx(ctx)
     if isinstance(names, str):
@@ -11210,6 +11227,32 @@ def Length(s):
     s = _coerce_seq(s)
     return ArithRef(Z3_mk_seq_length(s.ctx_ref(), s.as_ast()), s.ctx)
 
+def SeqMap(f, s):
+    """Map function 'f' over sequence 's'"""
+    ctx = _get_ctx2(f, s)
+    s = _coerce_seq(s, ctx)
+    return _to_expr_ref(Z3_mk_seq_map(s.ctx_ref(), f.as_ast(), s.as_ast()), ctx)
+
+def SeqMapI(f, i, s):
+    """Map function 'f' over sequence 's' at index 'i'"""
+    ctx = _get_ctx(f, s)
+    s = _coerce_seq(s, ctx)
+    if not is_expr(i):
+        i = _py2expr(i)
+    return _to_expr_ref(Z3_mk_seq_mapi(s.ctx_ref(), f.as_ast(), i.as_ast(), s.as_ast()), ctx)
+
+def SeqFoldLeft(f, a, s):
+    ctx = _get_ctx2(f, s)
+    s = _coerce_seq(s, ctx)
+    a = _py2expr(a)
+    return _to_expr_ref(Z3_mk_seq_foldl(s.ctx_ref(), f.as_ast(), a.as_ast(), s.as_ast()), ctx)
+
+def SeqFoldLeftI(f, i, a, s):
+    ctx = _get_ctx2(f, s)
+    s = _coerce_seq(s, ctx)
+    a = _py2expr(a)
+    i = _py2epxr(i)
+    return _to_expr_ref(Z3_mk_seq_foldli(s.ctx_ref(), f.as_ast(), i.as_ast(), a.as_ast(), s.as_ast()), ctx)
 
 def StrToInt(s):
     """Convert string expression to integer

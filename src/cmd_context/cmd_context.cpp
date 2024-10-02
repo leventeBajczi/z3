@@ -629,6 +629,7 @@ cmd_context::~cmd_context() {
     finalize_cmds();
     finalize_tactic_manager();
     m_proof_cmds = nullptr;
+    m_var2values.reset();
     reset(true);
     m_mcs.reset();
     m_solver = nullptr;
@@ -654,6 +655,8 @@ void cmd_context::set_opt(opt_wrapper* opt) {
     m_opt = opt;
     for (unsigned i = 0; i < m_scopes.size(); ++i) 
         m_opt->push();
+    for (auto const& [var, value] : m_var2values)
+        m_opt->initialize_value(var, value);
     m_opt->set_logic(m_logic);
 }
 
@@ -1070,9 +1073,11 @@ void cmd_context::insert_rec_fun(func_decl* f, expr_ref_vector const& binding, s
 }
 
 func_decl * cmd_context::find_func_decl(symbol const & s) const {
+#if 0
     if (contains_macro(s)) {
         throw cmd_exception("invalid function declaration reference, named expressions (aka macros) cannot be referenced ", s);
     }
+#endif
     func_decls fs;
     if (m_func_decls.find(s, fs)) {
         if (fs.more_than_one())
@@ -1872,6 +1877,17 @@ void cmd_context::display_dimacs() {
     }
 }
 
+void cmd_context::set_initial_value(expr* var, expr* value) {
+    if (get_opt()) {
+        get_opt()->initialize_value(var, value);
+        return;
+    }
+    if (get_solver()) 
+        get_solver()->user_propagate_initialize_value(var, value);
+    m_var2values.push_back({expr_ref(var, m()), expr_ref(value, m())});    
+}
+
+
 void cmd_context::display_model(model_ref& mdl) {
     if (mdl) {
         if (mc0()) (*mc0())(mdl);
@@ -1893,6 +1909,8 @@ void cmd_context::display_model(model_ref& mdl) {
 void cmd_context::add_declared_functions(model& mdl) {
     model_params p;
     if (!p.user_functions())
+        return;
+    if (m_params.m_smtlib2_compliant)
         return;
     for (auto const& kv : m_func_decls) {
         func_decl* f = kv.m_value.first();
@@ -2066,7 +2084,10 @@ void cmd_context::complete_model(model_ref& md) const {
                 
             if (m_macros.find(k, decls)) 
                 body = decls.find(f->get_arity(), f->get_domain());
+            if (body && m_params.m_smtlib2_compliant)
+                continue;
             sort * range = f->get_range();
+            
             if (!body)
                 body = m().get_some_value(range);
             if (f->get_arity() > 0) {

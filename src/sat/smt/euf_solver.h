@@ -154,6 +154,7 @@ namespace euf {
         svector<scope>                   m_scopes;
         scoped_ptr_vector<th_solver>     m_solvers;
         ptr_vector<th_solver>            m_id2solver;
+        
 
         constraint* m_conflict = nullptr;
         constraint* m_eq = nullptr;
@@ -173,6 +174,7 @@ namespace euf {
         symbol                           m_smt = symbol("smt");            
         expr_ref_vector                  m_clause;
         expr_ref_vector                  m_expr_args;
+        expr_ref_vector                  m_assertions;
 
 
         // internalization
@@ -186,6 +188,8 @@ namespace euf {
         bool internalize_root(app* e, bool sign, ptr_vector<enode> const& args);
         euf::enode* mk_true();
         euf::enode* mk_false();
+
+        vector<std::pair<expr_ref, expr_ref>> m_initial_values;
 
         // replay
         typedef std::tuple<expr_ref, unsigned, sat::bool_var> reinit_t;
@@ -229,12 +233,11 @@ namespace euf {
         void log_antecedents(literal l, literal_vector const& r, th_proof_hint* hint);
         void log_justification(literal l, th_explain const& jst);
         void log_justifications(literal l, unsigned explain_size, bool is_euf);
+        enode_pair get_justification_eq(size_t j);
         void log_rup(literal l, literal_vector const& r);
 
 
         eq_proof_hint* mk_hint(symbol const& th, literal lit);
-
-
 
         void init_proof();
         void on_clause(unsigned n, literal const* lits, sat::status st) override;
@@ -482,6 +485,10 @@ namespace euf {
         bool enable_ackerman_axioms(expr* n) const;
         bool is_fixed(euf::enode* n, expr_ref& val, sat::literal_vector& explain);
 
+        void add_assertion(expr* f);
+        expr_ref_vector const& get_assertions() { return m_assertions; }
+        model_ref get_sls_model();
+
         // relevancy
 
         bool relevancy_enabled() const { return m_relevancy.enabled(); }
@@ -558,6 +565,8 @@ namespace euf {
             check_for_user_propagator();
             m_user_propagator->add_expr(e);
         }
+
+        void user_propagate_initialize_value(expr* var, expr* value);
 
         // solver factory
         ::solver* mk_solver() { return m_mk_solver(); }
