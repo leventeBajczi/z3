@@ -107,7 +107,7 @@ jobs:
 
   build-macos:
     needs: create-release
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
